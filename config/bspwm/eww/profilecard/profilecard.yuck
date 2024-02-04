@@ -268,7 +268,7 @@
                        "󰚌"))
                (eventbox :cursor "pointer"
                (button :class "launcher-btn"
-                       :onclick "cd && OpenApps --filemanager"
+                       :onclick "cd && OpenApps --ranger"
                        :tooltip "File Manager"
                        "󰝰"))
                (eventbox :cursor "pointer"

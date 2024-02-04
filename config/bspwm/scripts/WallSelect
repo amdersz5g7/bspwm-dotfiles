@@ -58,4 +58,6 @@ wall_selection=$(find "${wall_dir}" -type f \( -iname "*.jpg" -o -iname "*.jpeg"
 # Set wallpaper
 [[ -n "$wall_selection" ]] || exit 1
 feh --no-fehbg --bg-fill "${wall_dir}"/"${wall_selection}"
+betterlockscreen -u "${wall_dir}"/"${wall_selection}"
+echo "${wall_dir}"/"${wall_selection}" >> ~/wallselect
 exit 0

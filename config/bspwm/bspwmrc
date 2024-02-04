@@ -16,18 +16,42 @@ export RICETHEME
 PATH="$HOME/.config/bspwm/scripts:$PATH"
 rice_dir="$HOME/.config/bspwm/rices/$RICETHEME"
 
+numlockx on
+
 ## Fix java applications
 export _JAVA_AWT_WM_NONREPARENTING=1
 
 #  ╦ ╦╔═╗╦═╗╦╔═╔═╗╔═╗╔═╗╔═╗╔═╗╔═╗
 #  ║║║║ ║╠╦╝╠╩╗╚═╗╠═╝╠═╣║  ║╣ ╚═╗
-#  ╚╩╝╚═╝╩╚═╩ ╩╚═╝╩  ╩ ╩╚═╝╚═╝╚═╝
+#  ╚╩╝╚═╝╩╚═╩ ╩╚═╝╩  ╩ ╩╚═╝╚═╝╚═╝	
+	
+	# # Default 1 monitor with 6 workspaces
+	# for monitor in "$(xrandr -q | grep -w 'connected' | cut -d' ' -f1)"; do
+	# 	bspc monitor -d '1' '2' '3' '4' '5' '6'
+	# 	#bspc monitor "$monitor" -d '' '' '' '' '' ''
+	# done
+	
+	INTERNAL_MONITOR="eDP1"
+	EXTERNAL_MONITOR="HDMI2"
+	
+	#if [[ $(xrandr -q | grep "${EXTERNAL_MONITOR} connected") ]]; then
+	if [[ $(xrandr --listactivemonitors | grep "${EXTERNAL_MONITOR}") ]]; then
+		#bspc monitor "$EXTERNAL_MONITOR" -d '' '' '' '' ''
+		
+		bspc wm -0 "$EXTERNAL_MONITOR"
+		xrandr --output $INTERNAL_MONITOR --off
+		#bspc monitor "$INTERNAL_MONITOR" -d '' '' '' ''
 
-	# Default 1 monitor with 6 workspaces
-	for monitor in "$(xrandr -q | grep -w 'connected' | cut -d' ' -f1)"; do
-		bspc monitor "$monitor" -d '1' '2' '3' '4' '5' '6'
-		#bspc monitor "$monitor" -d '' '' '' '' '' ''
-	done
+		#bspc wm -O "$EXTERNAL_MONITOR" "$INTERNAL_MONITOR"
+		#bspc monitor -d '1' '2' '3' '4' '5'
+		bspc monitor "$EXTERNAL_MONITOR" -d '' '' '' '' '' '' '' '' '' ''
+	else
+		xrandr --output $INTERNAL_MONITOR --auto
+		bspc wm -0 "$INTERNAL_MONITOR"
+		#bspc monitor "$INTERNAL_MONITOR" -d '' '' '' '' '' '' '' ''
+		bspc monitor "$INTERNAL_MONITOR" -d '1' '2' '3' '4' '5'
+	fi
+	
 
 	## For two or three monitors configuration see https://github.com/gh0stzk/dotfiles/wiki/Two-or-more-monitors-setup
 
@@ -37,8 +61,8 @@ export _JAVA_AWT_WM_NONREPARENTING=1
 
 bspc config external_rules_command "$HOME"/.config/bspwm/scripts/ExternalRules
 
-bspc config window_gap					6
-bspc config split_ratio					0.51
+bspc config window_gap					10 #6
+bspc config split_ratio					0.55 #0.51
 bspc config single_monocle				true
 bspc config borderless_monocle			false
 bspc config gapless_monocle				false
@@ -51,8 +75,11 @@ bspc config pointer_action1				move
 bspc config pointer_action2				resize_side
 bspc config pointer_action3				resize_corner
 
+bspc config border_width				10
+
 #bspc wm --adopt-orphans
 bspc rule -a scratch sticky=on state=floating focus=on
+bspc rule -a Blueman-manager state=floating focus=on
 
 #  ╔═╗╦ ╦╔╦╗╔═╗╔═╗╔╦╗╔═╗╦═╗╔╦╗
 #  ╠═╣║ ║ ║ ║ ║╚═╗ ║ ╠═╣╠╦╝ ║ 
@@ -62,7 +89,7 @@ bspc rule -a scratch sticky=on state=floating focus=on
 . SetSysVars
 
 # Terminate already running polybar, stalonetray, sxhkd and dunst instances
-processes=("sxhkd" "polybar" "stalonetray" "dunst" "eww.*bar")
+processes=("eww.*bar" "polybar" "sxhkd" "dunst" "stalonetray")
 
 	for process in "${processes[@]}"; do
 		if pgrep -f "$process"; then
@@ -73,21 +100,25 @@ processes=("sxhkd" "polybar" "stalonetray" "dunst" "eww.*bar")
 # Load bspwm conf, colors, dunst, bars and/or eww widgets
 . ${rice_dir}/Theme.sh
 
+# Launch picom // If you have old hardware or encounter problems 
+# uncomment the picom "--legacy-backends" line and comment the current one.
+pidof -q picom || { picom --config "$HOME"/.config/bspwm/picom.conf & }
+#pidof -q picom || { picom --legacy-backends --config "$HOME"/.config/bspwm/picom.conf & }
+
+# Set random wallpaper for actual rice
+#feh -z --no-fehbg --bg-fill ${rice_dir}/walls
+
+# Launch eww daemon
+pidof -q eww || { eww -c "$HOME"/.config/bspwm/eww daemon & }
 
 # Reload sxhkd daemon
 sxhkd -c "$HOME"/.config/bspwm/sxhkdrc &
 
-# Launch stalonetray
-[[ "$RICETHEME" != "z0mbi3" ]] && stalonetray -c "$HOME"/.config/bspwm/stalonetrayrc & sleep 0.1 && xdo hide -N stalonetray && touch "/tmp/syshide.lock"
-
 # Launch dunst notification daemon
 dunst -config "$HOME"/.config/bspwm/dunstrc &
 
-# Set random wallpaper for actual rice
-feh -z --no-fehbg --bg-fill ${rice_dir}/walls
-
-# Launch eww daemon
-pidof -q eww || { eww -c "$HOME"/.config/bspwm/eww daemon & }
+# Launch stalonetray
+[[ "$RICETHEME" != "z0mbi3" ]] && stalonetray -c "$HOME"/.config/bspwm/stalonetrayrc & sleep 0.1 && xdo hide -N stalonetray && touch "/tmp/syshide.lock"
 
 # Launch polkit
 pidof -q polkit-gnome-authentication-agent-1 || { /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 & }
@@ -95,7 +126,16 @@ pidof -q polkit-gnome-authentication-agent-1 || { /usr/lib/polkit-gnome/polkit-g
 # Fix cursor
 xsetroot -cursor_name left_ptr
 
-# Launch picom // If you have old hardware or encounter problems 
-# uncomment the picom "--legacy-backends" line and comment the current one.
-pidof -q picom || { picom -b --config "$HOME"/.config/bspwm/picom.conf & }
-#pidof -q picom || { picom --legacy-backends --config "$HOME"/.config/bspwm/picom.conf & }
+#for_window [class="Blueman-manager"] floating enable
+
+bspc subscribe | while read -r line; do
+    node_num=$(bspc query --nodes --desktop | wc -l)
+	NHidden=$(bspc query -N -n .hidden -d focused | wc -l)
+    if [ "$node_num" != "0" ] && [ "$NHidden" == "0" ]; then
+		  # nitrogen --set-zoom-fill ~/BLUR.PNG
+		feh --no-fehbg --bg-fill ~/.cache/betterlockscreen/current/wall_dimblur.png
+    else
+	    feh --no-fehbg --bg-fill ~/.cache/betterlockscreen/current/wall_resize.png
+    fi
+done;
+

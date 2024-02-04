@@ -12,8 +12,8 @@
 
 # Set bspwm configuration for Emilia
 set_bspwm_config() {
-	bspc config border_width 0
-	bspc config top_padding 56
+	bspc config border_width 3
+	bspc config top_padding 50 #56
 	bspc config bottom_padding 2
 	bspc config left_padding 2
 	bspc config right_padding 2
@@ -25,41 +25,12 @@ set_bspwm_config() {
 
 # Reload terminal colors
 set_term_config() {
-	cat > "$HOME"/.config/alacritty/rice-colors.toml << EOF
-# (Tokyo Night) color scheme for Emilia Rice
+	sed -i "$HOME"/.config/alacritty/fonts.yml \
+		-e "s/family: .*/family: JetBrainsMono NF/g" \
+		-e "s/size: .*/size: 10/g"
 
-# Default colors
-[colors.primary]
-background = "#1a1b26"
-foreground = "#a9b1d6"
-
-# Cursor colors
-[colors.cursor]
-cursor = "#bb9af7"
-text = "#1a1b26"
-
-# Normal colors
-[colors.normal]
-black = "#32344a"
-blue = "#7aa2f7"
-cyan = "#449dab"
-green = "#9ece6a"
-magenta = "#ad8ee6"
-red = "#f7768e"
-white = "#787c99"
-yellow = "#e0af68"
-
-# Bright colors
-[colors.bright]
-black = "#444b6a"
-blue = "#7da6ff"
-cyan = "#0db9d7"
-green = "#b9f27c"
-magenta = "#bb9af7"
-red = "#ff7a93"
-white = "#acb0d0"
-yellow = "#ff9e64"
-EOF
+	sed -i "$HOME"/.config/alacritty/rice-colors.yml \
+		-e "s/colors: .*/colors: *emilia_tokyo_night/"
 }
 
 # Set compositor configuration
@@ -68,8 +39,8 @@ set_picom_config() {
 		-e "s/normal = .*/normal =  { fade = true; shadow = true; }/g" \
 		-e "s/shadow-color = .*/shadow-color = \"#000000\"/g" \
 		-e "s/corner-radius = .*/corner-radius = 6/g" \
-		-e "s/\".*:class_g = 'Alacritty'\"/\"100:class_g = 'Alacritty'\"/g" \
-		-e "s/\".*:class_g = 'FloaTerm'\"/\"100:class_g = 'FloaTerm'\"/g"
+		-e "s/\".*:class_g = 'Alacritty'\"/\"90:class_g = 'Alacritty'\"/g" \
+		-e "s/\".*:class_g = 'FloaTerm'\"/\"90:class_g = 'FloaTerm'\"/g"
 }
 
 # Set stalonetray config
@@ -77,7 +48,7 @@ set_stalonetray_config() {
 	sed -i "$HOME"/.config/bspwm/stalonetrayrc \
 		-e "s/background .*/background \"#1A1B26\"/" \
 		-e "s/vertical .*/vertical true/" \
-		-e "s/geometry .*/geometry 1x1-113+52/" \
+		-e "s/geometry .*/geometry 1x1-85+50/" \
 		-e "s/grow_gravity .*/grow_gravity NE/" \
 		-e "s/icon_gravity .*/icon_gravity NE/"
 }

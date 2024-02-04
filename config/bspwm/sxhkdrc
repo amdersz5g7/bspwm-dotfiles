@@ -17,15 +17,23 @@ super + Return
 super + alt + Return
 	OpenApps --floating
 
-# Application menu
+# Menu aplicaciones
 super + @space
 	OpenApps --menu
+
+# Show Desktop
+super + d
+	bspc query -N -n .local.window | xargs -I ID bspc node ID -g hidden
 
 #####
 
 # Apps (browser, editor, filemanager)
 shift + alt + {b,g,n}
 	OpenApps {--browser,--editor,--filemanager}
+
+# Apps filemanager
+super + e
+	OpenApps --filemanager
 
 # Terminal apps (ranger, nvim, ncmpcpp)
 shift + alt + {r,v,k}
@@ -48,11 +56,15 @@ alt + @space
 
 # Scratchpad
 super + alt + o
-	tdrop -a -w 70% -h 35% -y 0 -x 15%  --class scratch alacritty --class=scratch
+	tdrop -a -w 70% -h 35% -y 5 -x 15%  --class scratch alacritty --class=scratch
 
 # Power off, Reboot, Log out, Lockscreen, kill an app
-ctrl + super + alt + {p,r,q,l,k}
-	{systemctl poweroff, systemctl reboot,bspc quit,physlock -d,xkill}
+ctrl + super + alt + {p,r,q,k}
+	{systemctl poweroff, systemctl reboot,bspc quit,xkill}
+
+# lockscreen
+super + l
+	{betterlockscreen --lock dimblur}
 
 # Hide/Show Bar (Polybar and/or eww)
 super + {h,u}
@@ -72,8 +84,9 @@ Print
 
 # Screenshot Select
 ctrl + Print
-	ScreenShoTer --sel
-
+	flameshot gui -c
+	#ScreenShoTer --sel
+	
 # Screenshot in 10s
 alt + Print
 	ScreenShoTer --in10
@@ -150,7 +163,7 @@ super + {grave,Tab}
 	bspc {node,desktop} -f last
 
 # focus or send to the given desktop
-super + ctrl + {_,shift + }{1-9,0}
+super + {_,shift + }{1-9,0}
 	bspc {desktop -f,node -d} '^{1-9,10}'
 	
 # Send focused Node to workspace directionally
@@ -184,3 +197,20 @@ super + alt + shift + {Left,Down,Up,Right}
 # move a floating window
 alt + shift {Left,Down,Up,Right}
 	bspc node -v {-10 0,0 10,0 -10,10 0}
+
+# show emoji
+super + ctrl + e
+	OpenApps --emoji
+
+; # Add focused window to a tabbed instance in given direction
+; super + t; {h,j,k,l}
+;     ./tabc.sh $(bspc query -N -n {west,south,north,east}) add $(bspc query -N -n focused)
+
+
+; # Remove one tab from tabbed
+; super + t; r
+;     tabbed=$(bspc query -N -n focused); \
+;     child=$(./tabc.sh $tabbed list | head -n1); \
+;     ./tabc.sh $tabbed remove $child	
+
+

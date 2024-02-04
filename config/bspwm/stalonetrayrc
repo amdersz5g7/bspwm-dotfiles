@@ -1,6 +1,6 @@
 background "#1A1B26"
 vertical true
-geometry 1x1-113+52
+geometry 1x1-85+50
 grow_gravity NE
 icon_gravity NE
 icon_size 18
@@ -8,3 +8,39 @@ slot_size 27
 kludges force_icons_size
 skip_taskbar true
 window_type utility
+
+# # background "#1A1B26"
+# # decorations all
+# # geometry 1x1-85+50
+# # icon_size 48
+
+# #background "#1A1B26"
+# #background "#1A1B26"
+# #decoration none
+# dockapp_mode none
+# fuzzy_edges 0
+# geometry 1x1-85+50
+# grow_gravity NE
+# icon_gravity NE
+# icon_size 24
+# slot_size 24x24
+# log_level err
+# max_geometry 1x1-85+50
+# no_shrink false
+# parent_bg false
+# #scrollbars vertical
+# skip_taskbar false
+# sticky true
+# tint_color white
+# tint_level 0
+# transparent false
+# vertical true
+# window_layer top
+# window_strut auto
+# window_type utility
+# xsync false
+
+# #slot_size 32x64
+# kludges fix_window_pos
+# #decoration all
+# #dockap_mode none
